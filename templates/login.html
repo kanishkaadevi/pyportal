@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — UserBase Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-body">
+<div class="auth-container">
+    <div class="auth-left">
+        <div class="auth-brand">
+            <div class="logo-icon">⚡</div>
+            <h1>UserBase Pro</h1>
+        </div>
+        <h2>Welcome<br>back <span class="highlight">👋</span></h2>
+        <p>Sign in to manage your users and access your dashboard.</p>
+        <div class="auth-features">
+            <div class="feature">🔐 Secure Login</div>
+            <div class="feature">🛡️ Password Hashing</div>
+            <div class="feature">⚡ Session Management</div>
+            <div class="feature">📊 Full Dashboard Access</div>
+        </div>
+    </div>
+    <div class="auth-right">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Sign In</h2>
+                <p>Enter your credentials to continue</p>
+                {% if error %}
+                <div class="alert-error">⚠️ {{ error.username or error.password }}</div>
+                {% endif %}
+            </div>
+            <form method="POST" class="form" novalidate>
+                <div class="form-group {% if error.username %}has-error{% endif %}">
+                    <label>Username <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" name="username" placeholder="Enter your username" value="{{ form_data.get('username', '') }}" autofocus>
+                    </div>
+                    {% if error.username %}<div class="error-msg">⚠️ {{ error.username }}</div>{% endif %}
+                </div>
+                <div class="form-group {% if error.password %}has-error{% endif %}">
+                    <label>Password <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="password" placeholder="Enter your password" id="loginpass">
+                        <span class="toggle-pass" onclick="togglePass('loginpass')">👁️</span>
+                    </div>
+                    {% if error.password %}<div class="error-msg">⚠️ {{ error.password }}</div>{% endif %}
+                </div>
+                <button type="submit" class="btn-primary">🔐 Sign In</button>
+                <div class="auth-switch">
+                    Don't have an account? <a href="/register">Create one →</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function togglePass(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('blur', function() {
+        const group = this.closest('.form-group');
+        if (this.value.trim()) {
+            group.classList.remove('has-error');
+            group.classList.add('has-success');
+        } else {
+            group.classList.add('has-error');
+        }
+    });
+});
+</script>
+</body>
+</html>
