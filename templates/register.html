@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — UserBase Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-body">
+<div class="auth-container">
+    <div class="auth-left">
+        <div class="auth-brand">
+            <div class="logo-icon">⚡</div>
+            <h1>UserBase Pro</h1>
+        </div>
+        <h2>Manage users<br>like a <span class="highlight">pro.</span></h2>
+        <p>A powerful user management system built with Python & Flask.</p>
+        <div class="auth-features">
+            <div class="feature">✅ Secure Authentication</div>
+            <div class="feature">✅ Real-time Validation</div>
+            <div class="feature">✅ Beautiful Dashboard</div>
+            <div class="feature">✅ Full User Management</div>
+        </div>
+    </div>
+    <div class="auth-right">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Fill in all details to register</p>
+                {% if error %}
+                <div class="alert-error">⚠️ Please fix {{ error|length }} error(s) below</div>
+                {% endif %}
+            </div>
+            <form method="POST" class="form" novalidate>
+                <div class="form-group {% if error.username %}has-error{% endif %}">
+                    <label>Username <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" name="username" placeholder="Choose a username" value="{{ form_data.get('username', '') }}">
+                    </div>
+                    {% if error.username %}<div class="error-msg">⚠️ {{ error.username }}</div>{% endif %}
+                </div>
+                <div class="form-group {% if error.email %}has-error{% endif %}">
+                    <label>Email Address <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="email" name="email" placeholder="Enter your email" value="{{ form_data.get('email', '') }}">
+                    </div>
+                    {% if error.email %}<div class="error-msg">⚠️ {{ error.email }}</div>{% endif %}
+                </div>
+                <div class="form-group {% if error.password %}has-error{% endif %}">
+                    <label>Password <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="password" placeholder="Min 6 characters" id="password">
+                        <span class="toggle-pass" onclick="togglePass('password')">👁️</span>
+                    </div>
+                    {% if error.password %}<div class="error-msg">⚠️ {{ error.password }}</div>{% endif %}
+                </div>
+                <div class="form-group {% if error.confirm %}has-error{% endif %}">
+                    <label>Confirm Password <span class="required-star">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="confirm" placeholder="Re-enter your password" id="confirm">
+                        <span class="toggle-pass" onclick="togglePass('confirm')">👁️</span>
+                    </div>
+                    {% if error.confirm %}<div class="error-msg">⚠️ {{ error.confirm }}</div>{% endif %}
+                </div>
+                <div class="password-strength" id="strength-bar" style="display:none">
+                    <div class="strength-label">Password Strength: <span id="strength-text">Weak</span></div>
+                    <div class="strength-track">
+                        <div class="strength-fill" id="strength-fill"></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">🚀 Create Account</button>
+                <div class="auth-switch">
+                    Already have an account? <a href="/login">Sign In →</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function togglePass(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+const passwordInput = document.getElementById('password');
+const strengthBar = document.getElementById('strength-bar');
+const strengthFill = document.getElementById('strength-fill');
+const strengthText = document.getElementById('strength-text');
+passwordInput.addEventListener('input', function() {
+    const val = this.value;
+    strengthBar.style.display = val ? 'block' : 'none';
+    let strength = 0;
+    if (val.length >= 6) strength++;
+    if (val.length >= 10) strength++;
+    if (/[A-Z]/.test(val)) strength++;
+    if (/[0-9]/.test(val)) strength++;
+    if (/[^A-Za-z0-9]/.test(val)) strength++;
+    const levels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
+    const colors = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#4f46e5'];
+    const widths = ['0%', '20%', '40%', '60%', '80%', '100%'];
+    strengthFill.style.width = widths[strength];
+    strengthFill.style.background = colors[strength];
+    strengthText.textContent = levels[strength];
+    strengthText.style.color = colors[strength];
+});
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('blur', function() {
+        const group = this.closest('.form-group');
+        if (this.value.trim()) {
+            group.classList.remove('has-error');
+            group.classList.add('has-success');
+        } else {
+            group.classList.add('has-error');
+            group.classList.remove('has-success');
+        }
+    });
+});
+</script>
+</body>
+</html>
