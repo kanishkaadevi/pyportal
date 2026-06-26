@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User — UserBase Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>UserBase Pro</span>
+    </div>
+    <nav>
+        <a href="/dashboard" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="/" class="nav-item"><span class="nav-icon">👥</span> All Users</a>
+        <a href="#" class="nav-item active"><span class="nav-icon">✏️</span> Edit User</a>
+    </nav>
+    <div class="sidebar-bottom">
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </div>
+</div>
+<div class="main">
+    <div class="topbar">
+        <div class="page-title">
+            <h1>✏️ Edit User</h1>
+            <p>Update information for {{ user.name }}</p>
+        </div>
+        <a href="/" class="back-btn">← Back to Users</a>
+    </div>
+    <div class="content">
+        <div class="card glow-card">
+            <div class="card-header">
+                <div class="card-title-row">
+                    <div>
+                        <h2>Update User Details</h2>
+                        <p>All fields marked with <span class="required-star">*</span> are required</p>
+                    </div>
+                    {% if error %}
+                    <span class="status-badge error">⚠️ {{ error|length }} field(s) missing</span>
+                    {% else %}
+                    <span class="status-badge success">✅ Ready to update</span>
+                    {% endif %}
+                </div>
+            </div>
+            <form method="POST" class="form" novalidate>
+                <div class="form-row">
+                    <div class="form-group {% if error.name %}has-error{% endif %}">
+                        <label>Full Name <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" name="name" value="{{ user.name }}" required>
+                        </div>
+                        {% if error.name %}<div class="error-msg">⚠️ {{ error.name }}</div>{% endif %}
+                    </div>
+                    <div class="form-group {% if error.email %}has-error{% endif %}">
+                        <label>Email Address <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        {% if error.email %}<div class="error-msg">⚠️ {{ error.email }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group {% if error.phone %}has-error{% endif %}">
+                        <label>Phone Number <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📱</span>
+                            <input type="text" name="phone" value="{{ user.phone or '' }}" required>
+                        </div>
+                        {% if error.phone %}<div class="error-msg">⚠️ {{ error.phone }}</div>{% endif %}
+                    </div>
+                    <div class="form-group {% if error.age %}has-error{% endif %}">
+                        <label>Age <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🎂</span>
+                            <input type="number" name="age" value="{{ user.age or '' }}" min="1" max="120" required>
+                        </div>
+                        {% if error.age %}<div class="error-msg">⚠️ {{ error.age }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group {% if error.city %}has-error{% endif %}">
+                        <label>City <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏙️</span>
+                            <input type="text" name="city" value="{{ user.city or '' }}" required>
+                        </div>
+                        {% if error.city %}<div class="error-msg">⚠️ {{ error.city }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div style="display:flex; gap:12px;">
+                            <button type="submit" class="btn-primary">💾 Save Changes</button>
+                            <a href="/" class="btn-cancel">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('blur', function() {
+        const group = this.closest('.form-group');
+        if (!group) return;
+        if (this.value.trim()) { group.classList.remove('has-error'); group.classList.add('has-success'); }
+        else { group.classList.add('has-error'); }
+    });
+});
+</script>
+</body>
+</html>
