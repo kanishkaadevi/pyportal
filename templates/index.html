@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>UserBase Pro</span>
+    </div>
+    <nav>
+        <a href="/dashboard" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="/" class="nav-item active"><span class="nav-icon">👥</span> All Users</a>
+        <a href="#add-form" class="nav-item"><span class="nav-icon">➕</span> Add User</a>
+    </nav>
+    <div class="sidebar-stats">
+        <div class="stat-box">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-number">{{ total }}</div>
+            <div class="stat-bar"><div class="stat-fill"></div></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Cities</div>
+            <div class="stat-number">{{ cities }}</div>
+            <div class="stat-bar"><div class="stat-fill green"></div></div>
+        </div>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </div>
+</div>
+<div class="main">
+    <div class="topbar">
+        <div class="page-title">
+            <h1>👥 User Management</h1>
+            <p>Manage, search and track all registered users</p>
+        </div>
+        <form method="GET" class="search-form">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="search" placeholder="Search by name, email or city..." value="{{ search }}">
+                <button type="submit" class="search-btn">Search</button>
+                {% if search %}<a href="/" class="clear-btn">✕</a>{% endif %}
+            </div>
+        </form>
+    </div>
+    <div class="content">
+        <div class="stats-row">
+            <div class="stat-card purple">
+                <div class="stat-card-icon">👥</div>
+                <div class="stat-card-info"><h3>{{ total }}</h3><p>Total Users</p></div>
+                <div class="stat-card-bg">👥</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-card-icon">🏙️</div>
+                <div class="stat-card-info"><h3>{{ cities }}</h3><p>Cities</p></div>
+                <div class="stat-card-bg">🏙️</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-card-icon">📋</div>
+                <div class="stat-card-info"><h3>{{ users|length }}</h3><p>Showing Now</p></div>
+                <div class="stat-card-bg">📋</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-card-icon">🌟</div>
+                <div class="stat-card-info"><h3>100%</h3><p>Data Secured</p></div>
+                <div class="stat-card-bg">🌟</div>
+            </div>
+        </div>
+        <div class="card glow-card" id="add-form">
+            <div class="card-header">
+                <div class="card-title-row">
+                    <div>
+                        <h2>➕ Add New User</h2>
+                        <p>All fields marked with <span class="required-star">*</span> are required</p>
+                    </div>
+                    {% if error %}
+                    <span class="status-badge error">⚠️ {{ error|length }} field(s) missing</span>
+                    {% else %}
+                    <span class="status-badge success">✅ Ready to add</span>
+                    {% endif %}
+                </div>
+            </div>
+            <form method="POST" class="form" novalidate>
+                <div class="form-row">
+                    <div class="form-group {% if error.name %}has-error{% endif %}">
+                        <label>Full Name <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" name="name" placeholder="Enter full name" value="{{ form_data.get('name', '') }}">
+                        </div>
+                        {% if error.name %}<div class="error-msg">⚠️ {{ error.name }}</div>{% endif %}
+                    </div>
+                    <div class="form-group {% if error.email %}has-error{% endif %}">
+                        <label>Email Address <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" name="email" placeholder="Enter email address" value="{{ form_data.get('email', '') }}">
+                        </div>
+                        {% if error.email %}<div class="error-msg">⚠️ {{ error.email }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group {% if error.phone %}has-error{% endif %}">
+                        <label>Phone Number <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📱</span>
+                            <input type="text" name="phone" placeholder="Enter phone number" value="{{ form_data.get('phone', '') }}">
+                        </div>
+                        {% if error.phone %}<div class="error-msg">⚠️ {{ error.phone }}</div>{% endif %}
+                    </div>
+                    <div class="form-group {% if error.age %}has-error{% endif %}">
+                        <label>Age <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🎂</span>
+                            <input type="number" name="age" placeholder="Enter age" min="1" max="120" value="{{ form_data.get('age', '') }}">
+                        </div>
+                        {% if error.age %}<div class="error-msg">⚠️ {{ error.age }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group {% if error.city %}has-error{% endif %}">
+                        <label>City <span class="required-star">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏙️</span>
+                            <input type="text" name="city" placeholder="Enter city" value="{{ form_data.get('city', '') }}">
+                        </div>
+                        {% if error.city %}<div class="error-msg">⚠️ {{ error.city }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-primary">➕ Add User</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-row">
+                    <div>
+                        <h2>👥 All Users</h2>
+                        <p>{{ users|length }} user(s) {% if search %}found for "{{ search }}"{% else %}registered{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+            {% if users %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th><th>User</th><th>Email</th><th>Phone</th><th>Age</th><th>City</th><th>Joined</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td><span class="badge">#{{ user.id }}</span></td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar" style="background: {{ ['#4f46e5','#10b981','#3b82f6','#f59e0b','#ef4444'][user.id % 5] }}">{{ user.name[0].upper() }}</div>
+                                    <div class="user-name">{{ user.name }}</div>
+                                </div>
+                            </td>
+                            <td><span class="email-text">{{ user.email }}</span></td>
+                            <td>{% if user.phone %}<span class="pill phone">📱 {{ user.phone }}</span>{% else %}<span class="pill missing">Not set</span>{% endif %}</td>
+                            <td>{% if user.age %}<span class="pill age">{{ user.age }} yrs</span>{% else %}<span class="pill missing">Not set</span>{% endif %}</td>
+                            <td>{% if user.city %}<span class="pill city">📍 {{ user.city }}</span>{% else %}<span class="pill missing">Not set</span>{% endif %}</td>
+                            <td><span class="date-text">{{ user.created_at[:10] if user.created_at else 'N/A' }}</span></td>
+                            <td>
+                                <div class="actions">
+                                    <a href="/edit/{{ user.id }}" class="btn-edit">✏️ Edit</a>
+                                    <a href="/delete/{{ user.id }}" class="btn-delete" onclick="return confirm('Delete {{ user.name }}?')">🗑️</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">👤</div>
+                <h3>No users found</h3>
+                <p>{% if search %}No results for "{{ search }}"{% else %}Add your first user above{% endif %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('blur', function() {
+        const group = this.closest('.form-group');
+        if (!group) return;
+        if (this.value.trim()) { group.classList.remove('has-error'); group.classList.add('has-success'); }
+        else { group.classList.add('has-error'); group.classList.remove('has-success'); }
+    });
+});
+</script>
+</body>
+</html>
