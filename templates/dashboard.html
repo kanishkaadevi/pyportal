@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — UserBase Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>UserBase Pro</span>
+    </div>
+    <nav>
+        <a href="/dashboard" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="/" class="nav-item"><span class="nav-icon">👥</span> All Users</a>
+        <a href="/#add-form" class="nav-item"><span class="nav-icon">➕</span> Add User</a>
+    </nav>
+    <div class="sidebar-stats">
+        <div class="stat-box">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-number">{{ total }}</div>
+            <div class="stat-bar"><div class="stat-fill"></div></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Cities</div>
+            <div class="stat-number">{{ cities }}</div>
+            <div class="stat-bar"><div class="stat-fill green"></div></div>
+        </div>
+    </div>
+    <div class="sidebar-bottom">
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </div>
+</div>
+<div class="main">
+    <div class="topbar">
+        <div class="page-title">
+            <h1>📊 Dashboard</h1>
+            <p>Welcome back, <strong>{{ session.username }}</strong>! 👋</p>
+        </div>
+        <div class="topbar-actions">
+            <a href="/" class="topbar-btn">👥 Manage Users</a>
+            <a href="/logout" class="topbar-btn danger">🚪 Logout</a>
+        </div>
+    </div>
+    <div class="content">
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Good to see you, {{ session.username }}! 🎉</h2>
+                <p>Here's what's happening in your user management system today.</p>
+            </div>
+            <div class="welcome-icon">📊</div>
+        </div>
+        <div class="stats-row">
+            <div class="stat-card purple">
+                <div class="stat-card-icon">👥</div>
+                <div class="stat-card-info"><h3>{{ total }}</h3><p>Total Users</p></div>
+                <div class="stat-card-bg">👥</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-card-icon">🏙️</div>
+                <div class="stat-card-info"><h3>{{ cities }}</h3><p>Cities</p></div>
+                <div class="stat-card-bg">🏙️</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-card-icon">🔐</div>
+                <div class="stat-card-info"><h3>ON</h3><p>Auth Active</p></div>
+                <div class="stat-card-bg">🔐</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-card-icon">🛡️</div>
+                <div class="stat-card-info"><h3>Safe</h3><p>Security Status</p></div>
+                <div class="stat-card-bg">🛡️</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-row">
+                    <div>
+                        <h2>🕐 Recently Added Users</h2>
+                        <p>Last 5 users added to the system</p>
+                    </div>
+                    <a href="/" class="topbar-btn">View All →</a>
+                </div>
+            </div>
+            {% if recent %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>City</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent %}
+                        <tr>
+                            <td><span class="badge">#{{ user.id }}</span></td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar" style="background: {{ ['#4f46e5','#10b981','#3b82f6','#f59e0b','#ef4444'][user.id % 5] }}">{{ user.name[0].upper() }}</div>
+                                    <div class="user-name">{{ user.name }}</div>
+                                </div>
+                            </td>
+                            <td><span class="email-text">{{ user.email }}</span></td>
+                            <td>{% if user.city %}<span class="pill city">📍 {{ user.city }}</span>{% else %}<span class="pill missing">Not set</span>{% endif %}</td>
+                            <td><span class="date-text">{{ user.created_at[:10] if user.created_at else 'N/A' }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">👤</div>
+                <h3>No users yet</h3>
+                <p>Add your first user to see them here</p>
+                <a href="/" class="btn-primary" style="display:inline-block;margin-top:16px;text-decoration:none;">➕ Add User</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="card glow-card">
+            <div class="card-header">
+                <h2>🔐 Authentication Info</h2>
+                <p>How your account is secured</p>
+            </div>
+            <div class="auth-info-grid">
+                <div class="auth-info-item">
+                    <div class="auth-info-icon">🔒</div>
+                    <div><h4>Password Hashing</h4><p>Your password is hashed using Werkzeug PBKDF2-SHA256 — never stored as plain text</p></div>
+                </div>
+                <div class="auth-info-item">
+                    <div class="auth-info-icon">🍪</div>
+                    <div><h4>Session Management</h4><p>Flask sessions keep you logged in securely using a secret key</p></div>
+                </div>
+                <div class="auth-info-item">
+                    <div class="auth-info-icon">🛡️</div>
+                    <div><h4>Protected Routes</h4><p>All pages require login — unauthorised users are redirected to login</p></div>
+                </div>
+                <div class="auth-info-item">
+                    <div class="auth-info-icon">🚪</div>
+                    <div><h4>Secure Logout</h4><p>Session is fully cleared on logout — no data leakage</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
